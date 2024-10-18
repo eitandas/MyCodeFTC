@@ -134,6 +134,7 @@ public class DriveTrain {
         pidY.setSetPoint(y);
         pidZ.setSetPoint(z);
         while (!pidX.atSetPoint() && !pidY.atSetPoint() && !pidZ.atSetPoint() || timer.seconds() < timeOut) {
+            update();
             xPower = pidX.calculate(xPosition, x);
             yPower = pidY.calculate(yPosition, y);
             zPower = pidZ.calculate(angle, z);
