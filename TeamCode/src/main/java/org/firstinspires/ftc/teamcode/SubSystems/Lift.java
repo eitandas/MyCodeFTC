@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Utils.PIDFController;
 
 public class Lift {
@@ -12,6 +13,8 @@ public class Lift {
     private final double[] levels = {0, 1000, 2000, 3000};
     private final double tolerance = 0;
     private double position;
+    private final double minAMP = 0;
+    private final double maxAMP = 0;
 
     public Lift(OpMode opMode) {
         lift = opMode.hardwareMap.get(DcMotorEx.class, "Lift");
@@ -39,6 +42,9 @@ public class Lift {
 
     public void setPower(double power) {
         lift.setPower(power);
+        if (lift.getCurrent(CurrentUnit.AMPS)>maxAMP){
+            resetEncoders();
+        }
     }
 
     public void liftByLevels(int level) {
