@@ -117,7 +117,7 @@ public class DriveTrain {
         leftBack.setPower(leftBackPower);
     }
 
-    public void FieldCentricDrive(Vector2d vec, double z) {
+    public void fieldCentricDrive(Vector2d vec, double z) {
         vec.rotateBy(angle);
         setPower(new Pose2d(vec, z));
     }
@@ -126,14 +126,18 @@ public class DriveTrain {
         ElapsedTime timer = new ElapsedTime();
         double x = pose.getX();
         double y = pose.getY();
-        double z = pose.getAngle();
+        double z = Math.toRadians( pose.getAngle());
+        double xPower;
+        double yPower;
+        double zPower;
         pidX.setSetPoint(x);
         pidY.setSetPoint(y);
         pidZ.setSetPoint(z);
         while (!pidX.atSetPoint() && !pidY.atSetPoint() && !pidZ.atSetPoint() || timer.seconds() < timeOut) {
-            pidX.calculate(xPosition, x);
-            pidY.calculate(yPosition, y);
-            pidZ.calculate(angle, z);
+            xPower = pidX.calculate(xPosition, x);
+            yPower = pidY.calculate(yPosition, y);
+            zPower = pidZ.calculate(angle, z);
+            fieldCentricDrive(new Vector2d(xPower, yPower), zPower);
         }
     }
 }
