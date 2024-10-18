@@ -15,6 +15,7 @@ public class Lift {
 
     public Lift(OpMode opMode) {
         lift = opMode.hardwareMap.get(DcMotorEx.class, "Lift");
+        init();
     }
 
     public void init(){
