@@ -95,6 +95,12 @@ public class DriveTrain {
         angle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
 
+    public void updateEncoders() {
+        xPosition = (leftXEncoder.getCurrentPosition() + rightXEncoder.getCurrentPosition()) / 2;
+        yPosition = yEncoder.getCurrentPosition();
+        angle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+    }
+
     public void stop() {
         rightFront.setPower(0);
         rightBack.setPower(0);
@@ -126,15 +132,14 @@ public class DriveTrain {
         ElapsedTime timer = new ElapsedTime();
         double x = pose.getX();
         double y = pose.getY();
-        double z = Math.toRadians( pose.getAngle());
+        double z = Math.toRadians(pose.getAngle());
         double xPower;
         double yPower;
         double zPower;
         pidX.setSetPoint(x);
         pidY.setSetPoint(y);
         pidZ.setSetPoint(z);
-        while (!pidX.atSetPoint() && !pidY.atSetPoint() && !pidZ.atSetPoint() || timer.seconds() < timeOut) {
-            update();
+        while (!pidX.atSetPoint() && !pidY.atSetPoint() && !pidZ.atSetPoint() && timer.seconds() < timeOut) {
             xPower = pidX.calculate(xPosition, x);
             yPower = pidY.calculate(yPosition, y);
             zPower = pidZ.calculate(angle, z);

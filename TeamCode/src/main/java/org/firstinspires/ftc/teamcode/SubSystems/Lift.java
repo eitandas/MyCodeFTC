@@ -12,28 +12,29 @@ public class Lift {
     private final double[] levels = {0, 1000, 2000, 3000};
     private final double tolerance = 0;
     private double position;
+    private double sp = 0;
 
     public Lift(OpMode opMode) {
         lift = opMode.hardwareMap.get(DcMotorEx.class, "Lift");
         init();
     }
 
-    public void init(){
+    public void init() {
         resetEncoders();
         setTolerance();
-        update();
+        updateEncodoers();
     }
 
-    public void setTolerance(){
+    public void setTolerance() {
         pidf.setTolerance(tolerance);
     }
 
-    public void resetEncoders(){
+    public void resetEncoders() {
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void update() {
+    public void updateEncodoers() {
         position = lift.getCurrentPosition();
     }
 
@@ -41,11 +42,21 @@ public class Lift {
         lift.setPower(power);
     }
 
-    public void liftByLevels(int level) {
-        double sp = levels[level];
+    public void liftByLevels() {
+        setPower(pidf.calculate(position, sp));
+    }
+
+    public boolean atSetPoint() {
+        return pidf.atSetPoint();
+    }
+
+    public void stop() {
+        lift.setPower(0);
+    }
+
+    public void setLevel(int level) {
+        sp = levels[level];
         pidf.setSetPoint(sp);
-        while (!pidf.atSetPoint()) {
-            setPower(pidf.calculate(position, sp));
-        }
     }
 }
+
