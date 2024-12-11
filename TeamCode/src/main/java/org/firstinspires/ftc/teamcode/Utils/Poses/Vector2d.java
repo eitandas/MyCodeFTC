@@ -17,14 +17,24 @@ public class Vector2d {
     public Vector2d rotateBy(double angle) {
         double cos = Math.cos(-angle);
         double sin = Math.sin(-angle);
-        double x = this.x * cos - this.y * sin;
-        double y = this.x * sin + this.y * cos;
-        return new Vector2d(x,y);
+        this.x = this.x * cos - this.y * sin;
+        this.y = this.x * sin + this.y * cos;
+        return new Vector2d(this.x,this.y);
     }
+
+    public Vector2d unrotateBy(double angle) {
+        double cos = Math.cos(angle);
+        double sin = Math.sin(angle);
+        this.x = this.x * cos - this.y * sin;
+        this.y = this.x * sin + this.y * cos;
+        return new Vector2d(this.x,this.y);
+    }
+
 
     public Vector2d rotateByDegrees(double degrees) {
         return rotateBy(Math.toRadians(degrees));
     }
+    public Vector2d unrotateByDegrees(double degrees) {return unrotateBy(Math.toRadians(degrees));}
 
     public double getX() {
         return x;

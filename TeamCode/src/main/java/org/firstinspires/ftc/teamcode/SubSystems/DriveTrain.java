@@ -129,9 +129,11 @@ public class DriveTrain {
     }
 
     public void autonomusDrive(Pose2d pose, double timeOut) {
+        Vector2d cDVec = new Vector2d(pose.getX(), pose.getY());
+        cDVec.rotateByDegrees(angle);
         ElapsedTime timer = new ElapsedTime();
-        double x = pose.getX();
-        double y = pose.getY();
+        double x = cDVec.getX();
+        double y = cDVec.getY();
         double z = Math.toRadians(pose.getAngle());
         double xPower;
         double yPower;
@@ -139,11 +141,20 @@ public class DriveTrain {
         pidX.setSetPoint(x);
         pidY.setSetPoint(y);
         pidZ.setSetPoint(z);
+        cDVec.unrotateByDegrees(angle);
         while (!pidX.atSetPoint() && !pidY.atSetPoint() && !pidZ.atSetPoint() && timer.seconds() < timeOut) {
+            cDVec = new Vector2d(x, y);
+            cDVec.rotateByDegrees(angle);
+            x = cDVec.getX();
+            y = cDVec.getY();
             xPower = pidX.calculate(xPosition, x);
             yPower = pidY.calculate(yPosition, y);
             zPower = pidZ.calculate(angle, z);
-            fieldCentricDrive(new Vector2d(xPower, yPower), zPower);
+            cDVec = new Vector2d(xPower, yPower);
+            cDVec.unrotateBy(angle);
+            x = cDVec.getX();
+            y = cDVec.getY();
+            fieldCentricDrive(new Vector2d(x, y), zPower);
         }
     }
 }
